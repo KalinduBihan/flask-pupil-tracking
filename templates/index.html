@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flask Logging Control</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+      }
+      button {
+        padding: 10px 20px;
+        margin: 10px;
+        cursor: pointer;
+      }
+      #focusIndex {
+        margin-top: 20px;
+        font-size: 20px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Logging Control</h1>
+    <button onclick="startCamera()">Start Camera</button>
+    <button onclick="startLogging()">Start Logging</button>
+    <button onclick="stopLogging()">Stop Logging</button>
+    <p id="focusIndex">Focus Index: N/A</p>
+
+    <script>
+      function startCamera() {
+        fetch("/startCam", { method: "GET" })
+          .then((response) => response.json())
+          .then((data) => alert(data.message || "Camera started"))
+          .catch((error) => console.error("Error:", error));
+      }
+
+      function startLogging() {
+        fetch("/startLoggingCam", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((response) => response.json())
+          .then((data) => alert(data.message || "Logging started"))
+          .catch((error) => console.error("Error:", error));
+      }
+
+      function stopLogging() {
+        fetch("/stopLoggingCam", { method: "GET" })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Focus Index:", data.message.focus_index);
+            document.getElementById("focusIndex").innerText =
+              "Focus Index: " + data.message.focus_index;
+            alert(data.message || "Logging stopped");
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+    </script>
+  </body>
+</html>
