@@ -2,9 +2,9 @@ import csv
 import cv2
 import numpy as np
 import random
-import tkinter as tk
+# import tkinter as tk
 import os
-from tkinter import filedialog
+# from tkinter import filedialog
 import matplotlib.pyplot as plt
 import time
 import datetime
