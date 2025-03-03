@@ -7,6 +7,8 @@ import os
 from tkinter import filedialog
 import matplotlib.pyplot as plt
 import time
+import urllib.request
+import tempfile
 
 # Crop the image to maintain a specific aspect ratio (width:height) before resizing. 
 def crop_to_aspect_ratio(image, width=640, height=480):
@@ -403,27 +405,33 @@ def process_frame(frame):
     
     return final_rotated_rect
 
-# Loads a video and finds the pupil in each frame
-import time  # Import time module to track elapsed time
-
 def process_video(video_path, input_method):
     results = []  # List to store results instead of writing to CSV
-    
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter('C:/Storage/Source Videos/output_video.mp4', fourcc, 30.0, (640, 480))
 
-    if input_method == 1:
-        cap = cv2.VideoCapture(video_path)
-    elif input_method == 2:
-        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-        cap.set(cv2.CAP_PROP_EXPOSURE, -5)
-    else:
-        print("Invalid video source.")
-        return []
+    # Handle Google Cloud Storage URLs
+    if video_path.startswith("http"):  # If video_path is a URL
+        temp_dir = tempfile.gettempdir()  # ✅ Get OS-specific temp directory
+        temp_video_path = os.path.join(temp_dir, "temp_video.mp4")  # ✅ Cross-platform temp file path
+
+        try:
+            print(f"Downloading video from: {video_path} to {temp_video_path}")
+            urllib.request.urlretrieve(video_path, temp_video_path)
+            video_path = temp_video_path  # Use the downloaded file
+        except Exception as e:
+            print(f"Error downloading video: {e}")
+            return {"error": "Failed to download video from URL."}
+
+    # Check if the file exists (for local paths)
+    if not os.path.exists(video_path):
+        print(f"Error: Video file not found at {video_path}")
+        return {"error": f"Video file not found at {video_path}"}
+
+    # Initialize video capture
+    cap = cv2.VideoCapture(video_path) if input_method == 1 else cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
     if not cap.isOpened():
         print("Error: Could not open video.")
-        return []
+        return {"error": "Could not open video file."}
 
     debug_mode_on = False
     frame_count = 0
@@ -453,22 +461,21 @@ def process_video(video_path, input_method):
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             break
-        elif key == ord(' '):
+        elif key == ord(' '):  # Pause video
             while True:
                 key = cv2.waitKey(1) & 0xFF
-                if key == ord(' '):
+                if key == ord(' '):  # Resume on space press
                     break
                 elif key == ord('q'):
                     break
 
     cap.release()
-    out.release()
     cv2.destroyAllWindows()
-    
+
     # Print results to console
     for entry in results:
         print(entry)
-    
+
     return results
 
 #Prompts the user to select a video file if the hardcoded path is not found
