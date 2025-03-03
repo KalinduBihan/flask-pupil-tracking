@@ -2,7 +2,6 @@ import csv
 import cv2
 import numpy as np
 import random
-import math
 import tkinter as tk
 import os
 from tkinter import filedialog
