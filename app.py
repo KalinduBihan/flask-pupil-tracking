@@ -10,7 +10,8 @@ app = Flask(__name__)
 CORS(app)
 
 # Initialize Google Cloud Storage
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/kalin/Desktop/Cloud storage/biometricgaze-7f3cf41d6ef8.json"
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/kalin/Desktop/Cloud storage/biometricgaze-7f3cf41d6ef8.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/kalindubihanfdo/biometricgaze-7f3cf41d6ef8.json"
 
 client = storage.Client()
 print("Connected to Google Cloud Storage. Project ID:", client.project)
