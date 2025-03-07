@@ -444,8 +444,8 @@ def process_video(video_path, input_method):
         if not ret:
             break
 
-        if frame_count % frame_interval == 0:  # Process only one frame per second
-            timestamp = frame_count / fps if fps > 0 else frame_count / 30  # Calculate timestamp
+        if frame_count % frame_interval == 0:  
+            timestamp = frame_count / fps if fps > 0 else frame_count / 30  
             frame = crop_to_aspect_ratio(frame)
             darkest_point = get_darkest_area(frame)
             pupil_rotated_rect = process_frame(frame)
@@ -454,7 +454,7 @@ def process_video(video_path, input_method):
                 pupil_x, pupil_y = pupil_rotated_rect[0]
                 results.append({"time": timestamp, "x": pupil_x, "y": pupil_y})
             else:
-                results.append({"time": timestamp, "x": None, "y": None})
+                results.append({"time": timestamp, "x": 0, "y": 0})
         
         frame_count += 1
 
