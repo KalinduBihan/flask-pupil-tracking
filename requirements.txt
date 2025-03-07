@@ -64,3 +64,4 @@ pyasn1-modules
 wsproto
 Flask-Cors
 python-dotenv
+google-cloud-storage
